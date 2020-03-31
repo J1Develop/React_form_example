@@ -1,25 +1,36 @@
 import React from "react";
 
 export default class Form extends React.Component {
-    state = {
-        name: "",
-        pwd: "",
-        email: "",
-        numOnly: "",
-        fixedLen: "",
-        nameErr: "",
-        pwdErr: "",
-        emailErr: "",
-        numOnlyErr: "",
-        fixedLenErr: "",
-    }
+    constructor(props) {
+        super();
+        this.state = {
+            name: "",
+            pwd: "",
+            email: "",
+            numOnly: "",
+            fixedLen: "",
+            selectedVal: "",
+            chkboxVal: false,
+            nameErr: "",
+            pwdErr: "",
+            emailErr: "",
+            numOnlyErr: "",
+            fixedLenErr: "",
+            selectedValErr: "",
+            chkboxValErr: ""
+        }
 
+        this.handleChange = this.handleChange.bind(this);
+    }
+    
     validate = () => {
         let nameErr = "";
         let pwdErr = "";
         let emailErr = "";
         let numOnlyErr = "";
         let fixedLenErr = "";
+        let selectedValErr = "";
+        let chkboxValErr = "";
 
         if (!this.state.name)
             nameErr = "Required";
@@ -36,16 +47,25 @@ export default class Form extends React.Component {
             numOnlyErr = "Numbers Only";
 
         if (this.state.fixedLen.length < 5)
-            fixedLenErr = "Length should be larger than 5"
+            fixedLenErr = "Length should be larger than 5";
+
+        if (!this.state.selectedVal)
+            selectedValErr = "Required";
+
+        if(!this.state.chkboxVal)
+            chkboxValErr = "Required";
 
         if (nameErr || pwdErr || emailErr
-            || numOnlyErr || fixedLenErr) {
+            || numOnlyErr || fixedLenErr || selectedValErr
+            || chkboxValErr) {
             this.setState({
                 nameErr,
                 pwdErr,
                 emailErr,
                 numOnlyErr,
-                fixedLenErr
+                fixedLenErr,
+                selectedValErr,
+                chkboxValErr
             });
             return false;
         }
@@ -54,16 +74,28 @@ export default class Form extends React.Component {
     resetForm = () => {
         this.setState({
             name: "",
+            nameErr: "",
             pwd: "",
+            pwdErr: "",
             email: "",
+            emailErr: "",
             numOnly: "",
+            numOnlyErr: "",
             fixedLen: "",
+            fixedLenErr: "",
+            selectedVal: "",
+            selectedValErr: "",
+            chkboxVal: false,
+            chkboxValErr: ""
         });
     }
 
     handleChange = event => {
+        const target = event.target;
+        const isChkbox = target.type === "checkbox";
+
         this.setState({
-            [event.target.name]: event.target.value
+            [target.name]: isChkbox? target.checked : target.value
         });
     }
 
@@ -122,6 +154,27 @@ export default class Form extends React.Component {
                     onChange={this.handleChange} />
                 <div style={{ fontSize: 12, color: "red" }}>
                     {this.state.fixedLenErr}
+                </div>
+
+                <label>Select List: </label>
+                <select name="selectedVal" value={this.state.selectedVal} onChange={this.handleChange}>
+                    <option value="">Please Select</option>
+                    <option value="opt1">Option 1</option>
+                    <option value="opt2">Option 2</option>
+                    <option value="opt3">Option 3</option>
+                </select>
+                <div style={{ fontSize: 12, color: "red" }}>
+                    {this.state.selectedValErr}
+                </div>
+
+                <label>Checkbox: </label>
+                <input
+                    type="checkbox"
+                    name="chkboxVal"
+                    checked={this.state.chkboxVal}
+                    onChange={this.handleChange} />
+                <div style={{ fontSize: 12, color: "red" }}>
+                    {this.state.chkboxValErr}
                 </div>
 
                 <input type="submit" />
